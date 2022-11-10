@@ -5,7 +5,6 @@ import itertools
 from zipfile import ZipFile
 import json
 import numpy as np
-import pandas as pd
 from tqdm import tqdm
 from transformers import AutoTokenizer
 import logging as log
