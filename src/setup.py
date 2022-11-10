@@ -9,7 +9,7 @@ from tqdm import tqdm
 from transformers import AutoTokenizer
 import logging as log
 from typing import Dict
-from utils import ensemble_corpus_annotations
+from .utils import ensemble_corpus_annotations
 
 # Method to load data and compute 
 def setup_data(
