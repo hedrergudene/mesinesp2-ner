@@ -1,2 +1,2 @@
 # mesinesp2-ner
-Entity recognition use case on a Spanish, domain-specific corpus
+Entity recognition use case on a Spanish, domain-specific corpus. The goal of this project is to build a quick PoC to detect a custom number of annotations on a corpus composed by long texts.

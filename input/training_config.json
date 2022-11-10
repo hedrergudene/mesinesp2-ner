@@ -1,0 +1,20 @@
+{
+    "HuggingFace_model":"mrm8488/longformer-base-4096-spanish",
+    "dropout":0.25,
+    "batch_size":8,
+    "epochs":5,
+    "dataloader_num_workers":4,
+    "gradient_accumulation_steps":8,
+    "gamma":2.0,
+    "learning_rate":1e-4,
+    "weight_decay":1e-3,
+    "warmup_steps_factor":2,
+    "evaluation_steps_per_epoch":1,
+    "early_stopping":5,
+    "scheduler_mode":"min",
+    "verbose_steps":10,
+    "filepath":"output/",
+    "device":"cuda",
+    "fp16":1,
+    "seed":123
+}
