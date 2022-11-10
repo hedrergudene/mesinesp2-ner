@@ -53,16 +53,15 @@ def main(
     # Part II: Setup data and model
     #
 
+    # Get tools
+    log.debug(f"Setup tools:")
+    tag2idx, max_length, num_labels = setup_data(train_dct)
+    train_dct['max_length'] = max_length
     # Read data
     with open(train_annot_path, 'r') as f:
         train_annot = json.load(f)
     with open(test_annot_path, 'r') as f:
         test_annot = json.load(f)
-
-    # Get tools
-    log.debug(f"Setup tools:")
-    tag2idx, max_length, num_labels = setup_data(train_dct)
-    train_dct['max_length'] = max_length
     # Build datasets
     log.debug(f"Prepare datasets:")
     train_dts = NER_Dataset(train_annot, train_dct['HuggingFace_model'], max_length, tag2idx)
