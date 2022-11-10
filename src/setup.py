@@ -32,12 +32,10 @@ def setup_data(
         with open('input/Additional_Data.zip', 'wb') as f:
             f.write(response.raw.read())
     # Data extraction
-    for zip in [elem for elem in os.listdir("input") if elem[-3:]=='zip']:
-        with ZipFile("input/"+zip) as zf:
+    for zipfile_name in [elem for elem in os.listdir("input") if elem[-3:]=='zip']:
+        with ZipFile("input/"+zipfile_name) as zf:
             zf.extractall("input/")
-        os.remove("input/"+zip)
-    # Remove variable
-    del zip
+        os.remove("input/"+zipfile_name)
     # Build tag2idx dictionary following IB schema
     tag2idx = {
         **{schema+tag:idx for (tag, schema),idx in zip(itertools.product(['disease', 'medication', 'procedure', 'symptom'], ['B-','I-']), range(1,9))},
