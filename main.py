@@ -82,9 +82,12 @@ def main(
     logging_steps = steps_per_epoch if int(steps_per_epoch)==steps_per_epoch else int(steps_per_epoch)+1
     logging_steps = logging_steps//train_dct['evaluation_steps_per_epoch']
     # Training arguments
+    # Check https://huggingface.co/docs/transformers/perf_train_gpu_one#gradient-checkpointing
+    # to have a deeper understanding of training wrapper hyperparameters
     training_args = TrainingArguments(
         output_dir=os.path.join(os.getcwd(),train_dct['filepath']),
         gradient_accumulation_steps=train_dct['gradient_accumulation_steps'],
+        gradient_checkpointing=bool(train_dct['gradient_checkpointing']),
         warmup_steps=logging_steps*train_dct['warmup_steps_factor'],
         learning_rate=train_dct['learning_rate'],
         weight_decay=train_dct['weight_decay'],

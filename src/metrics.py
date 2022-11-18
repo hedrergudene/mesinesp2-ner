@@ -8,7 +8,7 @@ import torch
 
 def evaluate_metrics(trainer, val_dtl):
     # Setup
-    idx2ner = {v:k for k,v in trainer.eval_dataset.ner2idx.items()}
+    idx2tag = {v:k for k,v in trainer.eval_dataset.tag2idx.items()}
     device = 'cuda' if not trainer.args.no_cuda else 'cpu'
     NER_LABELS, NER_OUTPUT = [], []
     # Create loop with custom metrics
@@ -22,8 +22,8 @@ def evaluate_metrics(trainer, val_dtl):
             ner_output = trainer.model(**batch)
         ner_output = torch.argmax(ner_output, dim=-1).detach().cpu().numpy()
         # Decode NER arrays
-        ner_labels = np.vectorize(idx2ner.get)(ner_labels)
-        ner_output = np.vectorize(idx2ner.get)(ner_output)
+        ner_labels = np.vectorize(idx2tag.get)(ner_labels)
+        ner_output = np.vectorize(idx2tag.get)(ner_output)
         # Append results
         NER_LABELS.append(ner_labels)
         NER_OUTPUT.append(ner_output)
