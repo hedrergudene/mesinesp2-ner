@@ -12,7 +12,7 @@ from transformers import TrainingArguments, Trainer, AutoModelForTokenClassifica
 # Dependencies
 from src.setup import setup_data
 from src.dataset import NER_Dataset
-#from src.model import NER_Model
+from src.model import NER_Model
 from src.loss import FocalLoss
 from src.metrics import evaluate_metrics
 from src.utils import seed_everything
@@ -68,9 +68,7 @@ def main(
     val_dts = NER_Dataset(test_annot, train_dct['HuggingFace_model'], max_length, tag2idx)
     # Define model
     log.debug(f"Get model:")
-    # Update 21/11/2022: Use HF AutoClass to enable the usage of Optimum library
-    #model = NER_Model(train_dct['HuggingFace_model'], num_labels, train_dct['dropout'], train_dct['device'])
-    model = AutoModelForTokenClassification.from_pretrained(train_dct['HuggingFace_model'], num_labels=num_labels)
+    model = NER_Model(train_dct['HuggingFace_model'], num_labels, train_dct['dropout'], train_dct['device'])
 
     #
     # Part III: Prepare Trainer
