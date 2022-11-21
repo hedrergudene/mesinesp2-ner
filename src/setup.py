@@ -5,6 +5,8 @@ import itertools
 from zipfile import ZipFile
 import json
 import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 from transformers import AutoTokenizer
 import logging as log
@@ -42,19 +44,19 @@ def setup_data(
         **{'O':0}
     }
     # Get training-test annotations
-    train_annot = ensemble_corpus_annotations(
+    annot = ensemble_corpus_annotations(
         "input/Subtrack1-Scientific_Literature/Train/training_set_subtrack1_all.json",
         "input/Additional data/Subtrack1-Scientific_Literature/entities_subtrack1_training.json"
     )
-    test_annot = ensemble_corpus_annotations(
-        "input/Subtrack1-Scientific_Literature/Test/test_set_subtrack1.json",
-        "input/Additional data/Subtrack1-Scientific_Literature/entities_subtrack1_test.json"
-    )
+    annot_df = pd.DataFrame(annot)
+    annot_df['len'] = annot_df['entities'].apply(lambda x: len(x) if len(x)<=40 else 40)
+    _, _, train_idx, test_idx = train_test_split(annot_df['text'], range(len(annot_df)), stratify=annot_df['len'])
+    train_annot = None
     # Save results
     with open(annotations_train_path, 'w') as fout:
-        json.dump(train_annot, fout)
+        json.dump([x for idx, x in enumerate(annot) if idx in train_idx], fout)
     with open(annotations_test_path, 'w') as fout:
-        json.dump(test_annot, fout)
+        json.dump([x for idx, x in enumerate(annot) if idx in test_idx], fout)
 
     #
     # Part II: Tokenizer and data insights

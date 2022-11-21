@@ -7,12 +7,12 @@ import sys
 import torch
 import wandb
 import fire
-from transformers import TrainingArguments, Trainer
+from transformers import TrainingArguments, Trainer, AutoModelForTokenClassification
 
 # Dependencies
 from src.setup import setup_data
 from src.dataset import NER_Dataset
-from src.model import NER_Model
+#from src.model import NER_Model
 from src.loss import FocalLoss
 from src.metrics import evaluate_metrics
 from src.utils import seed_everything
@@ -68,7 +68,9 @@ def main(
     val_dts = NER_Dataset(test_annot, train_dct['HuggingFace_model'], max_length, tag2idx)
     # Define model
     log.debug(f"Get model:")
-    model = NER_Model(train_dct['HuggingFace_model'], num_labels, train_dct['dropout'], train_dct['device'])
+    # Update 21/11/2022: Use HF AutoClass to enable the usage of Optimum library
+    #model = NER_Model(train_dct['HuggingFace_model'], num_labels, train_dct['dropout'], train_dct['device'])
+    model = AutoModelForTokenClassification.from_pretrained(train_dct['HuggingFace_model'], num_labels=num_labels)
 
     #
     # Part III: Prepare Trainer
@@ -156,6 +158,12 @@ def main(
     last_model=max([int(elem.split('-')[-1]) for elem in os.listdir(os.path.join(os.getcwd(),'output'))])
     shutil.move(os.path.join(os.getcwd(),'output',f"checkpoint-{last_model}"), os.path.join(f"{wandb.run.dir}",f"checkpoint-{last_model}"))
     wandb.finish()
+
+    #
+    # Part VI: Optimisation
+    #
+
+    # Check: https://huggingface.co/blog/optimum-inference
    
 
 if __name__=="__main__":

@@ -1,10 +1,10 @@
 {
     "HuggingFace_model":"mrm8488/longformer-base-4096-spanish",
     "dropout":0.25,
-    "batch_size":16,
-    "epochs":5,
+    "batch_size":64,
+    "epochs":2,
     "dataloader_num_workers":4,
-    "gradient_accumulation_steps":4,
+    "gradient_accumulation_steps":2,
     "gradient_checkpointing":0,
     "gamma":2.0,
     "learning_rate":1e-4,
