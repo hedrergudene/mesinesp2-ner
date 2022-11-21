@@ -51,12 +51,13 @@ def setup_data(
     annot_df = pd.DataFrame(annot)
     annot_df['len'] = annot_df['entities'].apply(lambda x: len(x) if len(x)<=40 else 40)
     _, _, train_idx, test_idx = train_test_split(annot_df['text'], range(len(annot_df)), stratify=annot_df['len'])
-    train_annot = None
+    train_annot = [x for idx, x in enumerate(annot) if idx in train_idx]
+    test_annot = [x for idx, x in enumerate(annot) if idx in test_idx]
     # Save results
     with open(annotations_train_path, 'w') as fout:
-        json.dump([x for idx, x in enumerate(annot) if idx in train_idx], fout)
+        json.dump(train_annot, fout)
     with open(annotations_test_path, 'w') as fout:
-        json.dump([x for idx, x in enumerate(annot) if idx in test_idx], fout)
+        json.dump(test_annot, fout)
 
     #
     # Part II: Tokenizer and data insights
