@@ -6,10 +6,9 @@ import logging as log
 import torch
 
 
-def evaluate_metrics(trainer, val_dtl):
+def evaluate_metrics(model, val_dtl, device):
     # Setup
-    idx2tag = {v:k for k,v in trainer.eval_dataset.tag2idx.items()}
-    device = 'cuda' if not trainer.args.no_cuda else 'cpu'
+    idx2tag = {v:k for k,v in val_dtl.dataset.tag2idx.items()}
     NER_LABELS, NER_OUTPUT = [], []
     # Create loop with custom metrics
     log.info("Stack predictions:")
@@ -19,7 +18,7 @@ def evaluate_metrics(trainer, val_dtl):
         batch = {k:v.to(device) for k,v in batch.items()}
         # Get output
         with torch.no_grad():
-            ner_output = trainer.model(**batch)
+            ner_output = model(**batch)
         ner_output = torch.argmax(ner_output, dim=-1).detach().cpu().numpy()
         # Decode NER arrays
         ner_labels = np.vectorize(idx2tag.get)(ner_labels)
@@ -33,5 +32,4 @@ def evaluate_metrics(trainer, val_dtl):
     # Compute global metrics
     log.info("Compute global metrics:")
     f1NER, precision, recall = computeF1Score(NER_OUTPUT, NER_LABELS)
-    global_metrics={'f1_NER':f1NER,'precision_NER':precision,'recall_NER':recall}
-    return global_metrics
+    return {'f1_NER':f1NER,'precision_NER':precision,'recall_NER':recall}

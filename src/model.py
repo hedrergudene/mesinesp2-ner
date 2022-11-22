@@ -64,7 +64,7 @@ class NER_Model(torch.nn.Module):
                                        device=device,
                                        )
     
-    def forward(self, input_ids, attention_mask, labels=None):
+    def forward(self, input_ids, attention_mask):
         # Input
         ner_tokens = self._disentangle_transformer(input_ids, attention_mask)
         # Output
