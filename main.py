@@ -92,8 +92,6 @@ def main(
     model = NER_Model(
         train_dct['HuggingFace_model'],
         num_labels,
-        train_dct['max_length'],
-        train_dct['dim'],
         train_dct['dropout'],
         train_dct['device']
     )
@@ -108,7 +106,7 @@ def main(
         class_weights=None,
         device=train_dct['device']
     )
-    optimizer = torch.optim.AdamW([{'params':model.parameters(), 'lr':train_dct['learning_rate']}],
+    optimizer = torch.optim.AdamW(params=model.parameters(),
                                   lr=train_dct['learning_rate'],
                                   weight_decay=train_dct['weight_decay'],
                                   )
@@ -167,8 +165,6 @@ def main(
     model = NER_Model(
         train_dct['HuggingFace_model'],
         num_labels,
-        train_dct['max_length'],
-        train_dct['dim'],
         train_dct['dropout'],
         train_dct['device']
     )
