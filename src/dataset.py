@@ -71,4 +71,6 @@ class NER_Dataset(torch.utils.data.Dataset):
         # Save in dictionary
         ner_target =  torch.LongTensor(targets)
         # End of method
-        return {'input_ids': torch.squeeze(tokens['input_ids']), 'attention_mask':torch.squeeze(tokens['attention_mask']), 'labels':ner_target}
+        return {'x':{'input_ids': torch.squeeze(tokens['input_ids']), 'attention_mask':torch.squeeze(tokens['attention_mask'])},
+                'y':ner_target
+                }

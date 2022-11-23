@@ -559,7 +559,7 @@ class NER_Fitter(TorchFitterBase):
     def unpack(self, data):
         x = {k: v.to(self.device) for k, v in data['x'].items()}
         
-        y = {k: v.to(self.device) for k, v in data['y'].items()}
+        y = data['y'].to(self.device)
 
         if 'w' in data:
             w = data['w'].to(self.device).float()
@@ -629,7 +629,7 @@ class NER_Fitter(TorchFitterBase):
             # Run one training epoch
             t = time.time()
             train_loss = self.train_one_epoch(train_loader, step_callbacks=step_callbacks, verbose_steps=verbose_steps)
-            history['train_ner_loss'] = train_loss['NER'].avg
+            history['train_ner_loss'] = train_loss.avg
             history['lr'] = self.optimizer.param_groups[0]['lr']
 
             # Save checkpoint
@@ -642,13 +642,13 @@ class NER_Fitter(TorchFitterBase):
                                                                metric=metrics,
                                                                verbose_steps=verbose_steps)
                 
-                history['val_ner_loss'] = val_loss['NER'].avg
+                history['val_ner_loss'] = val_loss.avg
 
                 # Write log
                 metric_log = ' - ' + ' - '.join([f'{fname}: {value}' for value, fname in calculated_metrics]) if calculated_metrics else ''
                 self.log(f"\r[RESULT] {(time.time() - t):.2f}s - "\
-                         f"train ner loss: {train_loss['NER'].avg:.5f} - "\
-                         f"val ner loss: {val_loss['NER'].avg:.5f} - "\
+                         f"train ner loss: {train_loss.avg:.5f} - "\
+                         f"val ner loss: {val_loss.avg:.5f} - "\
                          + metric_log
                          )
 
@@ -656,10 +656,10 @@ class NER_Fitter(TorchFitterBase):
                     history.update({fname: value for value, fname in calculated_metrics})
                     #history['val_metric'] = calculated_metrics
 
-                calculated_metric = calculated_metrics[0][0] if calculated_metrics else val_loss['NER'].avg
+                calculated_metric = calculated_metrics[0][0] if calculated_metrics else val_loss.avg
             else:
                 # If no validation is provided, training loss is used as metric
-                calculated_metric = train_loss['NER'].avg
+                calculated_metric = train_loss.avg
 
             es_pct = early_stopping_pct * self.best_metric
 
@@ -750,7 +750,7 @@ class NER_Fitter(TorchFitterBase):
             # Run one batch
             loss = self.train_one_batch(x, y, w)
 
-            summary_ner_loss.update(loss['NER'].detach().item(), batch_size)
+            summary_ner_loss.update(loss.detach().item(), batch_size)
 
             # update optimizer using mixed precision if requested
             self.scaler.step(self.optimizer)
@@ -764,7 +764,7 @@ class NER_Fitter(TorchFitterBase):
                  f"train ner loss: {summary_ner_loss.avg:.5f} - "\
                  )
 
-        return {'NER':summary_ner_loss}
+        return summary_ner_loss
 
     def train_one_batch(self, x, y, w=None):
         """
@@ -794,11 +794,10 @@ class NER_Fitter(TorchFitterBase):
             loss = self.loss_function(output, y)
 
             # Reduce loss and apply sample weights if existing
-            loss['summary'] = self.reduce_loss(loss['summary'], w)
+            loss = self.reduce_loss(loss, w)
         
         # backpropagation
-        self.scaler.scale(loss['summary']).backward()
-
+        self.scaler.scale(loss).backward()
 
         return loss
 
@@ -855,7 +854,7 @@ class NER_Fitter(TorchFitterBase):
 
                 loss = self.loss_function(output, y)
 
-                ner_loss.update(loss['NER'].detach().item(), batch_size)
+                ner_loss.update(loss.detach().item(), batch_size)
 
                 if metric:
                     for f,name in metric:
@@ -875,4 +874,4 @@ class NER_Fitter(TorchFitterBase):
                  f"val ner loss: {ner_loss.avg:.5f} - " + \
                  metric_log
                  )
-        return {'NER':ner_loss}, calculated_metrics
+        return ner_loss, calculated_metrics
