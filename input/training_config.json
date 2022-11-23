@@ -1,4 +1,6 @@
 {
+    "train_data_path": "",
+    "val_data_path": "",
     "HuggingFace_model":"mrm8488/longformer-base-4096-spanish",
     "dropout":0.2,
     "batch_size":128,

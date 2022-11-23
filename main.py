@@ -98,7 +98,6 @@ def main(
     criterion = FocalLoss(
         gamma=train_dct['gamma_loss'],
         temperature=train_dct['temperature_loss'],
-        label_smoothing=train_dct['label_smoothing_loss'],
         from_logits=True,
         multilabel=False,
         reduction='mean',
