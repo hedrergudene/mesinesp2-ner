@@ -40,11 +40,6 @@ def setup_data(
             with ZipFile("input/"+zipfile_name) as zf:
                 zf.extractall("input/")
             os.remove("input/"+zipfile_name)
-        # Build tag2idx dictionary following IB schema
-        tag2idx = {
-            **{schema+tag:idx for (tag, schema),idx in zip(itertools.product(['disease', 'medication', 'procedure', 'symptom'], ['B-','I-']), range(1,9))},
-            **{'O':0}
-        }
         # Get training-test annotations
         annot = ensemble_corpus_annotations(
             "input/Subtrack1-Scientific_Literature/Train/training_set_subtrack1_all.json",
@@ -70,6 +65,11 @@ def setup_data(
     # Part II: Tokenizer and data insights
     #
 
+    # Build tag2idx dictionary following IB schema
+    tag2idx = {
+        **{schema+tag:idx for (tag, schema),idx in zip(itertools.product(['disease', 'medication', 'procedure', 'symptom'], ['B-','I-']), range(1,9))},
+        **{'O':0}
+    }
     # Tokenizer
     tokenizer = AutoTokenizer.from_pretrained(train_dct['HuggingFace_model'])
     # Data insights
