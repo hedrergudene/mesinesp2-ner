@@ -20,7 +20,7 @@ def setup_data(
     annotations_test_path:str='input/mesinesp2_test_annotations.json'
 ):
 
-    if (train_dct['train_data_path']!='') & (train_dct['val_data_path']!=''):
+    if (train_dct['train_data_path']=='') | (train_dct['val_data_path']==''):
         #
         # Part I: Data gathering
         #
