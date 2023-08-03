@@ -95,6 +95,7 @@ def main(
         train_dct['dropout'],
         train_dct['device']
     )
+    model = torch.compile(model) # PyTorch 2.0
     criterion = torch.nn.CrossEntropyLoss(
         reduction='mean'
     )
