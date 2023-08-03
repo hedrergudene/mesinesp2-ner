@@ -95,16 +95,19 @@ def main(
         train_dct['dropout'],
         train_dct['device']
     )
-    criterion = FocalLoss(
-        gamma=train_dct['gamma_loss'],
-        temperature=train_dct['temperature_loss'],
-        from_logits=True,
-        multilabel=False,
-        reduction='mean',
-        n_classes=num_labels,
-        class_weights=None,
-        device=train_dct['device']
+    criterion = torch.nn.CrossEntropyLoss(
+        reduction='mean'
     )
+    #criterion = FocalLoss(
+    #    gamma=train_dct['gamma_loss'],
+    #    temperature=train_dct['temperature_loss'],
+    #    from_logits=True,
+    #    multilabel=False,
+    #    reduction='mean',
+    #    n_classes=num_labels,
+    #    class_weights=None,
+    #    device=train_dct['device']
+    #)
     optimizer = torch.optim.AdamW(params=model.parameters(),
                                   lr=train_dct['learning_rate'],
                                   weight_decay=train_dct['weight_decay'],

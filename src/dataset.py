@@ -68,6 +68,8 @@ class NER_Dataset(torch.utils.data.Dataset):
                     break
                 c = offsets[offset_index][0]
                 d = offsets[offset_index][1]
+        # Attention mask labelled as -100 to ignore pad tokens in loss function
+        targets[torch.squeeze(tokens['attention_mask'])==0] = -100
         # Save in dictionary
         ner_target =  torch.LongTensor(targets)
         # End of method
